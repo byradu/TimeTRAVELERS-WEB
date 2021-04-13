@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="content-section container d-block justify-content-xxl-center">
+        <form method="POST" action="#">
+            <!-- necesar pentru protectia cookieurilor (aduga CSRF token)-->
+            {{form.hidden_tag()}}
+            <fieldset class="form-group">
+                <div class="form-group d-block justify-content-xxl-center">   
+                    {{form.inputText.label(class="form-control-plaintextd-flex text-center h2")}}
+                    {{form.inputText(class="form-control form-control-lg overflow-auto d-block")}}
+                </div>
+                
+            </fieldset>
+            <div class="form-group d-grid">
+                {{form.submit(class="btn btn-primary mt-xl-4")}}
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
