@@ -3,13 +3,17 @@
 {% block content %}
 
     <div class="content-section container d-block justify-content-xxl-center">
-        <form method="POST" action="#">
+        <form method="POST" action="#" enctype="multipart/form-data">
             <!-- necesar pentru protectia cookieurilor (aduga CSRF token)-->
             {{form.hidden_tag()}}
             <fieldset class="form-group">
                 <div class="form-group d-block justify-content-xxl-center">   
                     {{form.inputText.label(class="form-control-plaintextd-flex text-center h2")}}
                     {{form.inputText(class="form-control form-control-lg overflow-auto d-block")}}
+                </div>
+                <div class="form-group d-block justify-content-xxl-center">   
+                    {{form.fileInput.label()}}
+                    {{form.fileInput(class="")}}
                 </div>
                 
             </fieldset>
