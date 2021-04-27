@@ -1,8 +1,7 @@
 from flask import Flask,render_template,url_for,redirect,request
 from forms import inputText
-import secrets,os
-import PyPDF2
-
+import secrets,os,codecs,PyPDF2
+from templates.pysyntime import SynTime, syntime
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'd1c8efd030c6d6c85a46bde85c2597805cf6c18bf1f40dbbfb7fc740d38b1113'
 
@@ -42,13 +41,17 @@ def home():
 
 @app.route('/results/')
 def results():
+    syntime = SynTime()
+    date = '27-04-2021'
     data = request.args.get('userInput')
     if '.pdf' in data:
         textdinpdf = getTextFromPdf(data)
-        print(textdinpdf)
-        return render_template('results.html',data=textdinpdf)
+        timeMLText = syntime.extractTimexFromText(textdinpdf, date)
+        # print(timeMLText)
+        return render_template('results.html',data=timeMLText)
     else:
-        return render_template('results.html',data=data)
+        timeMLText = syntime.extractTimexFromText(data, date)
+        return render_template('results.html',data=timeMLText)
     # filesToDelete.append(data)
 if __name__ == '__main__':
     app.run(debug=True)
