@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="display: flex;  justify-content: space-between;">
+
+    <div class="card scroll" style="border:1px solid grey;width: 45rem; margin-top: 1em; margin-left: -10vw;">
+        <!-- <img src="..." class="card-img-top" alt="..."> -->
+            <div class="card-body">
+                <h4 class="card-title">Rezultate</h4>
+                <div style="overflow-y: auto; max-height: 80vh;">
+                    <p class="card-text ">{{data}}</p>
+                </div>
+                <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+            </div>
+        </div>
+
+        <!-- fa un button pentru xml -->
+
+</div>
+
+{% endblock content %}

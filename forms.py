@@ -4,6 +4,10 @@ from wtforms import TextAreaField,SubmitField
 from wtforms.validators import DataRequired,Optional
 
 class inputText(FlaskForm):
-    inputText = TextAreaField('Insert text to process',validators=[Optional()])
-    fileInput = FileField('Insert your file here',validators=[Optional(),FileAllowed(['pdf','txt'])] )
+    inputText = TextAreaField('Introduceti textul dumneavoastra aici',validators=[Optional()])
+    fileInput = FileField('Introduceti fisierul',validators=[Optional(),FileAllowed(['pdf','txt'])] )
+    submit = SubmitField('Start!')
+
+class resultsInput(FlaskForm):
+    inputText = TextAreaField('Inserati textul',validators=[Optional()])
     submit = SubmitField('Start!')

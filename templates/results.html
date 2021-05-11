@@ -1,8 +1,42 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>{{data}}</h1>
+<div class="container" style="display: flex;  justify-content: space-between;">
+
+
+    <div class="card scroll" style="border:1px solid grey;width: 45rem; margin-top: 1em; margin-left: -10vw;">
+    <!-- <img src="..." class="card-img-top" alt="..."> -->
+        <div class="card-body">
+            <h4 class="card-title" style="margin-bottom: 0.5em; border-bottom: 1px solid black;">Text extras din fisier</h4>
+            <div style="overflow-y: auto; max-height: 80vh;">
+                <p class="card-text ">{{data}}</p>
+            </div>
+            <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+        </div>
+    </div>
+
+    <div>
+        <div class="card scroll" style="border:1px solid grey;width: 45rem;margin-top: 5em; margin-right: -5vw;">
+        <form method="POST" action="#" style="padding: 1em;" >
+            <!-- necesar pentru protectia cookieurilor (aduga CSRF token)-->
+            {{form.hidden_tag()}}
+            <fieldset class="form-group">
+                <div class="form-group d-block justify-content-xxl-center">   
+                    {{form.inputText.label(class="form-control-plaintextd-flex text-center h3")}}
+                    {{form.inputText(class="form-control form-control-lg overflow-auto d-block",rows="15")}}
+                </div>
+                
+                
+            </fieldset>
+            <div class="form-group d-grid">
+                {{form.submit(class="btn btn-primary mt-xl-4")}}
+            </div>
+        </form>
+        </div>
+    </div>
+    
+
+    <!-- <h1>{{data}}</h1> -->
 
     <!-- <img src="{{ url_for('static', filename='', _external=True) }}" /> -->
 </div>
