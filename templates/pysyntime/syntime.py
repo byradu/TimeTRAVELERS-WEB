@@ -2,7 +2,8 @@ from .model import TimeSegment
 from .util import NlpUtil
 from .util import RegexUtil
 from .util import TokenTypeUtil
-
+import xml.etree.ElementTree as ET
+from datetime import datetime as dt
 
 class SynTime(object):
     """
@@ -51,18 +52,18 @@ class SynTime(object):
 
             tokenTypeSet = self.__tokenTypeUtil.getTokenTypeSet(token, tag)
             taggedToken.tokenTypeSet = tokenTypeSet
-
-            if TokenTypeUtil.isHalfDayToken(taggedToken):
-                if token.lower() == 'am' or token.lower() == 'pm':
-                    if i == 0 or (not TokenTypeUtil.isNumeralToken(taggedTokenList[i - 1])
-                                  and not TokenTypeUtil.isTimeToken(taggedTokenList[i - 1])):
-                        taggedToken.clearTokenType()
-            elif TokenTypeUtil.isTimeZoneToken(taggedToken):
-                if i == 0 or not TokenTypeUtil.isTimeToken(taggedTokenList[i - 1]) \
-                        and not TokenTypeUtil.isHalfDayToken(taggedTokenList[i - 1]) \
-                        and not TokenTypeUtil.isNumeralToken(taggedTokenList[i - 1]):
-                    taggedToken.clearTokenType()
-            elif TokenTypeUtil.isEraToken(taggedToken):
+            #
+            # if TokenTypeUtil.isHalfDayToken(taggedToken):
+            #     if token.lower() == 'am' or token.lower() == 'pm':
+            #         if i == 0 or (not TokenTypeUtil.isNumeralToken(taggedTokenList[i - 1])
+            #                       and not TokenTypeUtil.isTimeToken(taggedTokenList[i - 1])):
+            #             taggedToken.clearTokenType()
+            # elif TokenTypeUtil.isTimeZoneToken(taggedToken):
+            #     if i == 0 or not TokenTypeUtil.isTimeToken(taggedTokenList[i - 1]) \
+            #             and not TokenTypeUtil.isHalfDayToken(taggedTokenList[i - 1]) \
+            #             and not TokenTypeUtil.isNumeralToken(taggedTokenList[i - 1]):
+            #         taggedToken.clearTokenType()
+            if TokenTypeUtil.isEraToken(taggedToken):
                 if i == 0 or not TokenTypeUtil.isNumeralToken(taggedTokenList[i - 1]):
                     taggedToken.clearTokenType()
             elif TokenTypeUtil.isYearToken(taggedToken):
@@ -211,6 +212,16 @@ class SynTime(object):
         taggedTokenListLen = len(taggedTokenList)
         timeSegmentListLen = len(timeSegmentList)
 
+        xml_doc = ET.Element('TimeML')
+        # DOCNO tag
+        DOCNO = ET.SubElement(xml_doc, 'DOCNO').text = str(dt.today())
+        # DOCTYPE tag
+        DOCTYPE = ET.SubElement(xml_doc, 'DOCTYPE', SOURCE="filename")
+        # BODY tag
+        BODY = ET.SubElement(xml_doc, 'BODY')
+        # TEXT tag
+        TEXT = ET.SubElement(BODY, 'TEXT')
+
         if timeSegmentList and timeSegmentListLen > 0:
             isTimex = True
             timexBeginTokenPosition = timeSegmentList[0].beginTokenPosition
@@ -223,18 +234,6 @@ class SynTime(object):
                 if timexEndTokenPosition + 1 == segmentBeginTokenPosition or timexEndTokenPosition > segmentBeginTokenPosition:
                     isTimex = False
                 elif timexEndTokenPosition == segmentBeginTokenPosition:
-                    # if TokenTypeUtil.isCommaToken(taggedTokenList[segmentBeginTokenPosition]):
-                    #     if segmentBeginTokenPosition == 0 or segmentBeginTokenPosition + 1 == taggedTokenListLen:
-                    #         isTimex = True
-                    #     else:
-                    #         commaPreToken = taggedTokenList[segmentBeginTokenPosition - 1]
-                    #         commaSufToken = taggedTokenList[segmentBeginTokenPosition + 1]
-                    #         if (TokenTypeUtil.isGeneralTimeToken(commaPreToken) or TokenTypeUtil.isNumeralToken(
-                    #                 commaPreToken)) and TokenTypeUtil.isGeneralTimeToken(commaSufToken) \
-                    #                 and not TokenTypeUtil.isSameTokenType(commaPreToken, commaSufToken):
-                    #             isTimex = False
-                    #         else:
-                    #             isTimex = True
                     if TokenTypeUtil.isLinkageToken(taggedTokenList[segmentBeginTokenPosition]):
                         isTimex = True
                     else:
@@ -258,42 +257,38 @@ class SynTime(object):
                     beginCharPosition = timexBeginTaggedToken.beginCharPosition
                     endCharPosition = timexEndTaggedToken.endCharPosition
 
-                    timeMLText += text[lastCharPosition:beginCharPosition]
+                    # timeMLText += text[lastCharPosition:beginCharPosition]
                     lastCharPosition = beginCharPosition
 
                     index = timexBeginTokenPosition
                     while index <= timexEndTokenPosition:
                         temTaggedToken = taggedTokenList[index]
-                        if TokenTypeUtil.isYearYearToken(temTaggedToken) or TokenTypeUtil.isYearMonthToken(temTaggedToken) \
-                           or TokenTypeUtil.isMonthMonthToken(temTaggedToken) or TokenTypeUtil.isWeekWeekToken(temTaggedToken) \
-                           or TokenTypeUtil.isHalfDayHalfDayToken(temTaggedToken) \
-                           or TokenTypeUtil.isNumeralNumeralToken(temTaggedToken):
-                            temBeginCharPosition = temTaggedToken.beginCharPosition
-                            items = temTaggedToken.token.split('-')
-                            timex = text[lastCharPosition:temBeginCharPosition + len(items[0])]
-                            timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex) + '-'
-                            lastCharPosition = temBeginCharPosition + len(items[0]) + 1
-                            tid += 1
-                            type='DATE'
-                        elif tokenTypeUtil.isYearToken(temTaggedToken) or tokenTypeUtil.isWeekToken(temTaggedToken) \
-                                 or tokenTypeUtil.isSeasonToken(temTaggedToken) or tokenTypeUtil.isDateToken(
-                                temTaggedToken) \
-                                 or tokenTypeUtil.isMonthToken(temTaggedToken) or tokenTypeUtil.isHalfDayToken(
-                                temTaggedToken) \
-                                 or tokenTypeUtil.isTimeLineToken(temTaggedToken) or tokenTypeUtil.isHolidayToken(
-                                temTaggedToken) \
-                                 or tokenTypeUtil.isNumeralToken(temTaggedToken):
-                            type = 'DATE'
-                        elif TokenTypeUtil.isTimeToken(temTaggedToken) or TokenTypeUtil.isTimeZoneToken(temTaggedToken) \
-                                or TokenTypeUtil.isEraToken(temTaggedToken) or TokenTypeUtil.isTimeUnitToken(
-                            temTaggedToken) \
-                                or TokenTypeUtil.isDayTimeToken(temTaggedToken) or TokenTypeUtil.isGeneralTimeToken(
-                            temTaggedToken):
-                            type = 'TIME'
-                        elif TokenTypeUtil.isDurationToken(temTaggedToken) or TokenTypeUtil.isDurationDurationToken(
-                                temTaggedToken) \
-                                or TokenTypeUtil.isDecadeToken(temTaggedToken):
+                        if TokenTypeUtil.isDurationToken(temTaggedToken) or TokenTypeUtil.isDurationDurationToken(temTaggedToken) \
+                             or TokenTypeUtil.isDecadeToken(temTaggedToken) or TokenTypeUtil.isTimeUnitToken(temTaggedToken) \
+                             or (TokenTypeUtil.isPrefixToken(temTaggedToken) and TokenTypeUtil.isDurationToken(temTaggedToken)):
                             type = 'DURATION'
+                        elif tokenTypeUtil.isYearToken(temTaggedToken) or tokenTypeUtil.isYearYearToken(temTaggedToken) \
+                                or tokenTypeUtil.isWeekToken(temTaggedToken) or tokenTypeUtil.isSeasonToken(
+                            temTaggedToken) \
+                                or tokenTypeUtil.isHolidayToken(temTaggedToken) or tokenTypeUtil.isDateToken(
+                            temTaggedToken) \
+                                or tokenTypeUtil.isMonthToken(temTaggedToken) or tokenTypeUtil.isMonthMonthToken(
+                            temTaggedToken) \
+                                or tokenTypeUtil.isTimeLineToken(temTaggedToken) or tokenTypeUtil.isYearMonthToken(
+                            temTaggedToken) \
+                                or tokenTypeUtil.isWeekToken(temTaggedToken) or tokenTypeUtil.isWeekWeekToken(
+                            temTaggedToken) \
+                                or tokenTypeUtil.isDateToken(temTaggedToken):
+                            type = 'DATE'
+                        elif TokenTypeUtil.isTimeToken(temTaggedToken) or TokenTypeUtil.isTimeTimeToken(temTaggedToken) \
+                                or TokenTypeUtil.isHalfDayToken(temTaggedToken) or TokenTypeUtil.isHalfDayHalfDayToken(
+                            temTaggedToken) \
+                               or TokenTypeUtil.isEraToken(
+                            temTaggedToken) \
+                                or TokenTypeUtil.isDayTimeToken(temTaggedToken) or TokenTypeUtil.isTimeLineToken(
+                            temTaggedToken) \
+                                or TokenTypeUtil.isGeneralTimeToken(temTaggedToken):
+                            type = 'TIME'
                         elif TokenTypeUtil.isPeriodToken(temTaggedToken):
                             type = 'SET'
                         else:
@@ -303,16 +298,19 @@ class SynTime(object):
                     if timexEndToken.endswith('\'s'):
                         timex = text[lastCharPosition:endCharPosition - 2]
                         timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                        tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
                         lastCharPosition = endCharPosition - 2
                     elif timexEndToken.endswith('s') \
                             and (timexEndTokenPosition + 1 < taggedTokenListLen and
                                  taggedTokenList[timexEndTokenPosition + 1].token == "'"):
                         timex = text[lastCharPosition:taggedTokenList[timexEndTokenPosition + 1].endCharPosition]
                         timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                        tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
                         lastCharPosition = taggedTokenList[timexEndTokenPosition + 1].endCharPosition
                     else:
                         timex = text[lastCharPosition:endCharPosition]
                         timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                        tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
                         lastCharPosition = endCharPosition
                     tid += 1
                     timexBeginTokenPosition = segmentBeginTokenPosition
@@ -331,36 +329,30 @@ class SynTime(object):
             beginCharPosition = timexBeginTaggedToken.beginCharPosition
             endCharPosition = timexEndTaggedToken.endCharPosition
 
-            timeMLText += text[lastCharPosition:beginCharPosition]
+            # timeMLText += text[lastCharPosition:beginCharPosition]
             lastCharPosition = beginCharPosition
 
             index = timexBeginTokenPosition
             while index <= timexEndTokenPosition:
                 temTaggedToken = taggedTokenList[index]
-                if TokenTypeUtil.isYearYearToken(temTaggedToken) or TokenTypeUtil.isYearMonthToken(temTaggedToken) \
-                   or TokenTypeUtil.isMonthMonthToken(temTaggedToken) or TokenTypeUtil.isWeekWeekToken(temTaggedToken) \
-                   or TokenTypeUtil.isHalfDayHalfDayToken(temTaggedToken) \
-                   or TokenTypeUtil.isNumeralNumeralToken(temTaggedToken):
-                    temBeginCharPosition = temTaggedToken.beginCharPosition
-                    items = temTaggedToken.token.split('-')
-                    timex = text[lastCharPosition:temBeginCharPosition + len(items[0])]
-                    timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex) + '-'
-                    lastCharPosition = temBeginCharPosition + len(items[0]) + 1
-                    tid += 1
-                    type='DATE'
-                elif tokenTypeUtil.isYearToken(temTaggedToken) or tokenTypeUtil.isWeekToken(temTaggedToken)\
-                         or tokenTypeUtil.isSeasonToken(temTaggedToken) or tokenTypeUtil.isDateToken(temTaggedToken)\
-                         or tokenTypeUtil.isMonthToken(temTaggedToken) or tokenTypeUtil.isHalfDayToken(temTaggedToken)\
-                         or tokenTypeUtil.isTimeLineToken(temTaggedToken) or tokenTypeUtil.isHolidayToken(temTaggedToken)\
-                         or tokenTypeUtil.isNumeralToken(temTaggedToken):
-                    type = 'DATE'
-                elif TokenTypeUtil.isTimeToken(temTaggedToken) or TokenTypeUtil.isTimeZoneToken(temTaggedToken)\
-                     or TokenTypeUtil.isEraToken(temTaggedToken) or TokenTypeUtil.isTimeUnitToken(temTaggedToken) \
-                     or TokenTypeUtil.isDayTimeToken(temTaggedToken) or TokenTypeUtil.isGeneralTimeToken(temTaggedToken):
-                    type = 'TIME'
-                elif TokenTypeUtil.isDurationToken(temTaggedToken) or TokenTypeUtil.isDurationDurationToken(temTaggedToken)\
-                     or TokenTypeUtil.isDecadeToken(temTaggedToken):
+                if TokenTypeUtil.isDurationToken(temTaggedToken) or TokenTypeUtil.isDurationDurationToken(temTaggedToken)\
+                     or TokenTypeUtil.isDecadeToken(temTaggedToken) or TokenTypeUtil.isTimeUnitToken(temTaggedToken)\
+                     or (TokenTypeUtil.isPrefixToken(temTaggedToken) and TokenTypeUtil.isDurationToken(temTaggedToken)):
                     type = 'DURATION'
+                elif tokenTypeUtil.isYearToken(temTaggedToken) or tokenTypeUtil.isYearYearToken(temTaggedToken) \
+                    or tokenTypeUtil.isWeekToken(temTaggedToken) or tokenTypeUtil.isSeasonToken(temTaggedToken) \
+                    or tokenTypeUtil.isHolidayToken(temTaggedToken) or tokenTypeUtil.isDateToken(temTaggedToken)\
+                    or tokenTypeUtil.isMonthToken(temTaggedToken) or tokenTypeUtil.isMonthMonthToken(temTaggedToken)\
+                    or tokenTypeUtil.isTimeLineToken(temTaggedToken) or tokenTypeUtil.isYearMonthToken(temTaggedToken) \
+                    or tokenTypeUtil.isWeekToken(temTaggedToken) or tokenTypeUtil.isWeekWeekToken(temTaggedToken) \
+                    or tokenTypeUtil.isDateToken(temTaggedToken):
+                    type = 'DATE'
+                elif TokenTypeUtil.isTimeToken(temTaggedToken) or TokenTypeUtil.isTimeTimeToken(temTaggedToken)\
+                     or TokenTypeUtil.isHalfDayToken(temTaggedToken) or TokenTypeUtil.isHalfDayHalfDayToken(temTaggedToken)  \
+                     or TokenTypeUtil.isEraToken(temTaggedToken)\
+                     or TokenTypeUtil.isDayTimeToken(temTaggedToken) or TokenTypeUtil.isTimeLineToken(temTaggedToken)\
+                     or TokenTypeUtil.isGeneralTimeToken(temTaggedToken):
+                    type = 'TIME'
                 elif TokenTypeUtil.isPeriodToken(temTaggedToken):
                     type = 'SET'
                 else:
@@ -370,19 +362,25 @@ class SynTime(object):
             if timexEndToken.endswith('\'s'):
                 timex = text[lastCharPosition:endCharPosition - 2]
                 timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
                 lastCharPosition = endCharPosition - 2
             elif timexEndToken.endswith('s') and (timexEndTokenPosition + 1 < taggedTokenListLen and
                     taggedTokenList[timexEndTokenPosition + 1].token == "'"):
                 timex = text[lastCharPosition:taggedTokenList[timexEndTokenPosition + 1].endCharPosition]
                 timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
+
                 lastCharPosition = taggedTokenList[timexEndTokenPosition + 1].endCharPosition
             else:
                 timex = text[lastCharPosition:endCharPosition]
                 timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
                 lastCharPosition = endCharPosition
             tid += 1
 
-        timeMLText += text[lastCharPosition:]
+        # timeMLText += text[lastCharPosition:]
+        tree = ET.ElementTree(xml_doc)
+        tree.write(r'pysyntime\resource\outputXML.xml', encoding='UTF-8', xml_declaration=True)
         return timeMLText
 
     @classmethod
@@ -392,4 +390,5 @@ class SynTime(object):
         TIMEX3_VALUE = "\" value=\""
         TIMEX3_MID = "\">"
         TIMEX3_END = "</TIMEX3>"
-        return TIMEX3_TID + str(tid) + TIMEX3_TYPE + timexType + TIMEX3_VALUE + value + TIMEX3_MID + timex + TIMEX3_END
+        return TIMEX3_TID + str(tid) + TIMEX3_TYPE + timexType + TIMEX3_VALUE + timex + TIMEX3_MID + '\n' + '   '+timex + '\n' + TIMEX3_END + '\n'
+

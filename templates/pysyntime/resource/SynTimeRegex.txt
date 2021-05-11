@@ -15,37 +15,36 @@
 [DIGIT_REGEX_1]@\d+
 
 [ORDINAL_REGEX_1]@primul|(al)\s(doi|trei|patru|cinci|sase|sapte|opt|noua|zece|unsprezece|doisprezece|treisprezece|paisprezece|cincisprezece|saisprezece|saptesprezece|optsprezece|nouasprezece|douazeci|treizeci|patruzeci|cincizeci|saizeci|saptezeci|optzeci|nouazeci)u?(lea)
-[ORDINAL_REGEX_2]@(douazeci|trezeci|patruzeci|cincizeci|saizeci|saptezeci|optzeci|nouazeci)si(unu|doi|trei|patru|cinci|sase|sapte|opt|noua)(lea)
+[ORDINAL_REGEX_2]@(douazeci|trezeci|patruzeci|cincizeci|saizeci|saptezeci|optzeci|nouazeci) si (unu|doi|trei|patru|cinci|sase|sapte|opt|noua)(lea)
+
+[TIME_REGEX_1]@[0-2]?[0-9]:[0-5]?[0-9]|[0-2]?[0-9],[0-5]?[0-9]
+[TIME_REGEX_2]@[0-2]?[0-9]:[0-5]?[0-9]:[0-5]?[0-9]
 
 [DATE_REGEX_1]@(?:[1-9]|[0-3][0-9])[-/\.](?:[1-9]|[0-3][0-9])[-/\.][1-2][0-9]{3}
 [DATE_REGEX_2]@[12][0-9]{3}[-/\.](?:0?[1-9]|1[0-2])[-/\.][0-3][0-9]
 [DATE_REGEX_3]@[1-9]{2}[-/\.](?:0?[1-9]|1[0-2])[-/\.][0-3][0-9]
 
-[TIME_REGEX_1]@[0-2]?[0-9]:[0-5]?[0-9]
-[TIME_REGEX_2]@[0-2]?[0-9]:[0-5]?[0-9]:[0-5]?[0-9]
+[HALFDAY_REGEX_1]@ora
 
-[TIME_ZONE_REGEX]@GMT|DST|BST|EST|UTC|SGT
-
-[HALFDAY_REGEX_1]@ora|orele
-
-[ERA_REGEX]@î\.?e\.?n|î\.?e\.?c|î\.?Hr
+[ERA_REGEX]@Ã®\.?e\.?n|Ã®\.?e\.?c|Ã®\.?Hr
 
 [DECADE_REGEX]@'10|'20|'30|'40|'50|'60|'70|'80|'90
 
-[TIME_UNIT_REGEX]@deceniu|decenii|an(i?)|luna|zi(le?)|ora|ore|minute|min\.?|secunde|sec\.?|milisecunde|saptamana|saptamani|secol(e?)|mileniu|weekend
+[TIME_UNIT_REGEX]@deceniu|decenii|an(i?|(ii)?)|luna|zi(le)?|ora|ore|minute|min\.?|secunde|sec\.?|milisecunde|saptamana|saptamani|secol(e)?(ul)?|mileniu|weekend
 
 [PERIOD_REGEX]@zilnic|saptamanal|lunar|anual
 
-[DAY_TIME_REGEX]@dimineata|dimineti|diminetile|matinal|miezul zile|pranz|ora pranzului|orele pranzului|pauza mare|pauzele mari|timpul mesei|dupa masa|seara|seri|serile|noapte|noptile|noaptea|inserat|inserate|amurg|amurguri|asfintit|asfintituri|apus|apusuri|apusul|crepuscul|zorilor|rasarit|zorile|zori|crapatul zilei|rasarit de soare|rasariturile de soare|rasaritul de soare|miez de noapte|miezul noptii|mijlocul noptii|nocturn(e?)|ora ceaiului|cina|ora cinei|vremea cinei|ziua|peste noapte|timpul noptii|toata noaptea|noaptea asta|noaptea aceasta|noptile acestea
+[DAY_TIME_REGEX]@dimineata|dimineti|diminetile|matinal|dupa-amiaza|dupa-amiezile|miezul zile|pranz|pauza de masa|pauzele de masa|ora pranzului|orele pranzului|pauza mare|pauzele mari|timpul mesei|dupa masa|seara|seri|serile|noapte|noptile|noaptea|inserat|inserate|amurg|amurguri|asfintit|asfintituri|apus|apusuri|apusul|crepuscul|zorilor|rasarit|zorile|zori|crapatul zilei|rasarit de soare|rasariturile de soare|rasaritul de soare|miez de noapte|miezul noptii|mijlocul noptii|nocturn(e?)|ora ceaiului|cina|ora cinei|vremea cinei|ziua|peste noapte|timpul noptii|toata noaptea|noaptea asta|noaptea aceasta|noptile acestea
 
 [SEASON_REGEX]@primavara|vara|toamna|iarna
 
-[TIMELINE_REGEX]@acum|prezent|azi|in prezent|momentan|in acest moment|ora actuala|curent|momentul actual|in momentul de fata|actualmente|recent|demult|ultima vreme|ultimul timp|ultima perioada|curand|trecut|anterior|pana atunci|evul|evul mediu|viitor|ulterior|moment|clipa|cu ocazia|ieri|altaieri|zilele trecute|astazi|maine
+[TIMELINE_REGEX]@acum|prezent|in prezent|momentan|in acest moment|ora actuala|curent|momentul actual|in momentul de fata|actualmente|recent|demult|ultima vreme|ultimul timp|ultima perioada|curand|trecut|anterior|pana atunci|evul|evul mediu|viitor|ulterior|moment|clipa|cu ocazia|ieri|altaieri|zilele trecute|astazi|maine
 
-[PREFIX_REGEX_1]@asta|acest|aceasta|aceste|astea|acesti|acestia|aceia|acele|alea|acei|aia|acestor|urmatori(i?)|consecutiv(i?)|anterior(i?)|ultimul|ultima|trecut|initial|inceput( de?)|la jumatatea|la mijlocul|in jur|mijloc( de?)|final|apropierea|urmatoare|viitoare|viitor|trecut|anterioare|anterior|dupa|peste|curent|idele lui|devreme|fiecare|alt(e?)|celelalte|celelalte|ceilalti|in jurul lui|circa|aproximativ|aproape|cam|cativa|cateva|niste|mai mult(e?)|inca( de?)|mai putin( de?)
-[PREFIX_REGEX_2]@inceperea|inceput(ul?)|start(ul?)|mijloc|jumatatea lui|sfarsit( de?)|sfarsitul|final(ul?)|timp( de?)|cativa|multe|niste|jumatate(a?)
+[PREFIX_REGEX_1]@asta|acest|aceasta|aceste|astea|acesti|acestia|aceia|acele|alea|acei|aia|acestor|urmatori(i?)|consecutiv(i?)|anterior(i?)|ultimul|ultima|trecut|initial|inceput( de?)|la jumatatea|la mijlocul|in jur|mijloc( de?)|final|apropierea|urmatoare|viitoare|viitor|trecut|anterioare|anterior|dupa|peste|curent|idele lui|devreme|fiecare|alt(e?)|celelalte|celelalte|ceilalti|in jurul lui|circa|aproximativ|aproape|cativa|cateva|niste|mai mult(e?)|inca( de?)|mai putin (de)?
+[PREFIX_REGEX_2]@inceperea|inceput(ul?)|start(ul?)|mijloc|jumatatea lui|sfarsit (de)?|sfarsitul|final(ul)?|cativa|multe|niste|jumatate(a?)|timp de|de \w{4,} pana \w{4,}|de\s
 
 [SUFFIX_REGEX]@in urma|devreme|atunci|acu
 [LINKAGE_REGEX]@si|sau|catre
+[COMMA_REGEX]@,
 
 [HOLIDAY_REGEX]@Anul Nou|Pasti|Pastele|Craciun(unul?)|Adormirea Maicii domnului|Rusaliile|Sfantul Andrei|Sfintii Valentin si Valentina|Ziua Copilului|Ziua Internationala a muncii|Ziua Nationala a Romaniei|Ziua Unirii Principatelor Romane

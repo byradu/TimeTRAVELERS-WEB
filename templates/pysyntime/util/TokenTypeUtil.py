@@ -21,15 +21,6 @@ class TokenTypeUtil(object):
         isPosTagCD = posTag == 'CD'
         isPosTagRB = posTag == 'RB'
 
-        mDuration = self.regexUtil.DURATION_PATTERN.fullmatch(token)
-        if (isPosTagNN or isPosTagJJ or isPosTagCD) and mDuration:
-            tokenTypeSet.add(TokenType.DURATION)
-
-        if not mDuration and (
-                self.regexUtil.DURATION_DURATION_PATTERN_1.fullmatch(token)
-                or self.regexUtil.DURATION_DURATION_PATTERN_2.fullmatch(token)):
-            tokenTypeSet.add(TokenType.DURATION_DURATION)
-
         if self.regexUtil.YEAR_PATTERN_1.fullmatch(token) or self.regexUtil.YEAR_PATTERN_2.fullmatch(token) \
                 or self.regexUtil.YEAR_MID_PATTERN.fullmatch(token) or self.regexUtil.ERA_YEAR_PATTERN.fullmatch(token):
             tokenTypeSet.add(TokenType.YEAR)
@@ -76,16 +67,19 @@ class TokenTypeUtil(object):
         if self.regexUtil.HALFDAY_HALFDAY_PATTERN.fullmatch(token):
             tokenTypeSet.add(TokenType.HALFDAY_HALFDAY)
 
-        if self.regexUtil.TIME_ZONE_PATTERN.fullmatch(token):
-            tokenTypeSet.add(TokenType.TIME_ZONE)
-
         if isPosTagNN and self.regexUtil.ERA_PATTERN.fullmatch(token):
             tokenTypeSet.add(TokenType.ERA)
 
+        # DURATION
         if isPosTagNN and self.regexUtil.TIME_UNIT_PATTERN.fullmatch(token):
             tokenTypeSet.add(TokenType.TIME_UNIT)
 
+        mDuration = self.regexUtil.DURATION_PATTERN.fullmatch(token)
+        if (isPosTagNN or isPosTagJJ or isPosTagCD) and mDuration:
+            tokenTypeSet.add(TokenType.DURATION)
 
+        if not mDuration and (self.regexUtil.DURATION_DURATION_PATTERN_1.fullmatch(token) or self.regexUtil.DURATION_DURATION_PATTERN_2.fullmatch(token)):
+            tokenTypeSet.add(TokenType.DURATION_DURATION)
 
         if (isPosTagNN or isPosTagRB or isPosTagJJ or self.regexUtil.DAY_TIME_MID_PATTERN.fullmatch(token))\
                 and self.regexUtil.DAY_TIME_PATTERN.fullmatch(token):
@@ -113,14 +107,12 @@ class TokenTypeUtil(object):
                 or mBasicNum2:
             tokenTypeSet.add(TokenType.NUMERAL)
 
-        if not mYearYear and not mBasicNum2 and (
-                self.regexUtil.DIGIT_DIGIT_PATTERN.fullmatch(
-                    token) or self.regexUtil.BASIC_NUMBER_NUMBER_PATTERN.fullmatch(token)
+        if not mYearYear and not mBasicNum2 and (self.regexUtil.DIGIT_DIGIT_PATTERN.fullmatch(token)
+                or self.regexUtil.BASIC_NUMBER_NUMBER_PATTERN.fullmatch(token)
                 or self.regexUtil.ORDINAL_ORDINAL_PATTERN.fullmatch(token)):
             tokenTypeSet.add(TokenType.NUMERAL_NUMERAL)
 
-        if len(tokenTypeSet) == 0 and (not isPosTagNN and self.regexUtil.PREFIX_PATTERN_1.fullmatch(token) or
-                                     isPosTagNN and self.regexUtil.PREFIX_PATTERN_2.fullmatch(token)):
+        if len(tokenTypeSet) == 0 and (not isPosTagNN and self.regexUtil.PREFIX_PATTERN_1.fullmatch(token) or isPosTagNN and self.regexUtil.PREFIX_PATTERN_2.fullmatch(token)):
             tokenTypeSet.add(TokenType.PREFIX)
 
         if self.regexUtil.SUFFIX_PATTERN.fullmatch(token):

@@ -95,9 +95,6 @@ class RegexUtil(object):
     TIME_TIME_REGEX = None
     TIME_TIME_PATTERN = None
 
-    TIME_ZONE_REGEX = None
-    TIME_ZONE_PATTERN = None
-
     ERA_REGEX = None
     ERA_PATTERN = None
     ERA_YEAR_REGEX = None
@@ -223,8 +220,8 @@ class RegexUtil(object):
                 self.TIME_REGEX_1 = regex
             elif regexName == 'TIME_REGEX_2':
                 self.TIME_REGEX_2 = regex
-            elif regexName == 'TIME_ZONE_REGEX':
-                self.TIME_ZONE_REGEX = regex
+            # elif regexName == 'TIME_ZONE_REGEX':
+            #     self.TIME_ZONE_REGEX = regex
             elif regexName == 'HALFDAY_REGEX_1':
                 self.HALFDAY_REGEX_1 = regex
             elif regexName == 'ERA_REGEX':
@@ -316,8 +313,6 @@ class RegexUtil(object):
         self.TIME_TIME_REGEX = "(" + self.TIME_REGEX_1 + "|" + self.TIME_REGEX_2 + ")-(" + self.TIME_REGEX_1 + "|" + self.TIME_REGEX_2 + ")"
         self.TIME_TIME_PATTERN = re.compile(self.TIME_TIME_REGEX)
 
-        self.TIME_ZONE_PATTERN = re.compile(self.TIME_ZONE_REGEX, re.IGNORECASE)
-
         self.ERA_PATTERN = re.compile(self.ERA_REGEX, re.IGNORECASE)
         self.ERA_YEAR_REGEX = self.DIGIT_REGEX_1 + "(" + self.ERA_REGEX + ")"
         self.ERA_YEAR_PATTERN = re.compile(self.ERA_YEAR_REGEX, re.IGNORECASE)
@@ -342,20 +337,24 @@ class RegexUtil(object):
 
 
        # POS: NN, JJ; Type: DURATION
-        self.DURATION_REGEX = "(" + self.PREFIX_REGEX_2 + ") (" + self.DIGIT_REGEX_1 + "|" + self.DIGIT_REGEX_2 + "|" + self.BASIC_NUMBER_REGEX_1 + "|" + self.BASIC_NUMBER_REGEX_2 + "|" + self.ORDINAL_REGEX_1 + "|" + self.ORDINAL_REGEX_2 + ")-?(" + self.TIME_UNIT_REGEX + ")"
+        self.DURATION_REGEX = "("+self.PREFIX_REGEX_1+"|"+self.PREFIX_REGEX_2+ ")(" + self.DIGIT_REGEX_1 + "|" + self.DIGIT_REGEX_2 + "|" + self.BASIC_NUMBER_REGEX_1 + "|" + self.BASIC_NUMBER_REGEX_2 + "|" + self.ORDINAL_REGEX_1 + "|" + self.ORDINAL_REGEX_2 + ")("+self.PREFIX_REGEX_1+"|"+self.PREFIX_REGEX_2+ ")(" + self.TIME_UNIT_REGEX + ")"
         self.DURATION_PATTERN = re.compile(self.DURATION_REGEX, re.IGNORECASE)
 
-        self.DURATION_DURATION_REGEX_1 = "(" + self.DIGIT_DIGIT_REGEX + "|" + self.BASIC_NUMBER_NUMBER_REGEX + "|" + self.ORDINAL_ORDINAL_REGEX + ")-?(" + self.TIME_UNIT_REGEX + ")"
+        self.DURATION_DURATION_REGEX_1 = "(" + self.DIGIT_REGEX_1 + "|" + self.DIGIT_REGEX_2 + "|" + self.BASIC_NUMBER_REGEX_1 + "|" + self.BASIC_NUMBER_REGEX_2 + "|" + self.ORDINAL_REGEX_1 + "|" + self.ORDINAL_REGEX_2 + ")("+self.PREFIX_REGEX_1+"|"+self.PREFIX_REGEX_2+ ")(" + self.TIME_UNIT_REGEX + ")"
         self.DURATION_DURATION_PATTERN_1 = re.compile(self.DURATION_DURATION_REGEX_1, re.IGNORECASE)
         self.DURATION_DURATION_REGEX_2 = self.DURATION_REGEX + "-" + self.DURATION_REGEX
         self.DURATION_DURATION_PATTERN_2 = re.compile(self.DURATION_DURATION_REGEX_2, re.IGNORECASE)
+        # self.DURATION_DURATION_REGEX_3 = "("+self.MONTH_REGEX+")("+self.YEAR_REGEX_1+")-("+self.MONTH_REGEX+")(" + self.YEAR_REGEX_1 + ")"
+        # self.DURATION_DURATION_PATTERN_3 = re.compile(self.DURATION_DURATION_REGEX_3, re.IGNORECASE)
+        # self.DURATION_DURATION_REGEX_4 = "(" + self.YEAR_REGEX_1 + ")-(" + self.YEAR_REGEX_1 + ")"
+        # self.DURATION_DURATION_PATTERN_4 = re.compile(self.DURATION_DURATION_REGEX_4, re.IGNORECASE)
 
         # POS: RB, JJ; Type: SET
         self.PERIOD_PATTERN = re.compile(self.PERIOD_REGEX, re.IGNORECASE)
 
         # POS: NN, NNP, NNS, RB, JJ; Type: TIME
         self.DAY_TIME_PATTERN = re.compile(self.DAY_TIME_REGEX, re.IGNORECASE)
-        self.DAY_TIME_MID_REGEX = self.DAY_TIME_REGEX  # "(" + self.MID_REGEX + ")(" +
+        self.DAY_TIME_MID_REGEX = "(" + self.MID_REGEX + ")(" + self.DAY_TIME_REGEX + ")"
         self.DAY_TIME_MID_PATTERN = re.compile(self.DAY_TIME_MID_REGEX, re.IGNORECASE)
 
         # POS: NN, NNS; Type: DATE

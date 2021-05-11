@@ -4,7 +4,6 @@ from ..model import BasicTaggedToken
 class TaggedToken(BasicTaggedToken):
     """
     Tagged token with token types.
-
     Attributes:
         tokenTypeSet (set): Token types for this token.
     """
