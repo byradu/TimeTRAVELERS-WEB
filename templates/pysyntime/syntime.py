@@ -380,7 +380,7 @@ class SynTime(object):
 
         # timeMLText += text[lastCharPosition:]
         tree = ET.ElementTree(xml_doc)
-        tree.write(r'pysyntime\resource\outputXML.xml', encoding='UTF-8', xml_declaration=True)
+        tree.write(r'templates\pysyntime\resource\outputXML.xml', encoding='UTF-8', xml_declaration=True)
         return timeMLText
 
     @classmethod
