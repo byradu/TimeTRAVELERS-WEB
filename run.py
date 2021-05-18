@@ -1,4 +1,4 @@
-from flask import Flask,render_template,url_for,redirect,request
+from flask import Flask,render_template,url_for,redirect,request,send_file
 from forms import inputText, resultsInput
 import secrets,os,PyPDF2
 from datetime import datetime
@@ -66,5 +66,13 @@ def results():
 def output():
     data = request.args.get('data')
     return render_template('output.html',data=data)
+
+@app.route('/download', methods=['GET'])
+def download():
+    file="templates/pysyntime/resource/outputXML.xml"
+    print(os.getcwd())
+    return send_file(file,as_attachment=True)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
