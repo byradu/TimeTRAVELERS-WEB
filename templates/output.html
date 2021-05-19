@@ -2,32 +2,63 @@
 
 {% block content %}
 <div class="container" style="display: flex;  justify-content: space-between;">
-
-    <div class="card scroll" style="border:1px solid grey;width: 45rem; margin-top: 1em; margin-left: -10vw;">
+    <div style="flex-direction:column;">
+    <div class="card scroll" style="border:1px solid grey;width: 50rem; margin-top: 1em; margin-left: -10vw;">
         <!-- <img src="..." class="card-img-top" alt="..."> -->
             <div class="card-body">
-                <h4 class="card-title">Rezultate</h4>
+                <h4 class="card-title" style="border-bottom: 3px solid grey;">Rezultate</h4>
                 <div style="overflow-y: auto; max-height: 80vh;">
                     <p class="card-text ">{{data}}</p>
                 </div>
                 <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
             </div>
         </div>
+        {% if pdf==1 %}
 
+        <div class="card scroll" style="border:1px solid grey;width: 50rem; margin-top: 1em; margin-left: -10vw;">
+            <!-- <img src="..." class="card-img-top" alt="..."> -->
+                <div class="card-body">
+                    <h4 class="card-title" style='border-bottom: 3px solid grey;'>PDF</h4>
+                    <div style="overflow-y: auto; max-height: 80vh;">
+                        <iframe src="{{url_for('showpdf',numepdf=nume)}}" style="width: 100%;height: 500px;">
+                        </iframe>
+                    </div>
+                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                </div>
+        </div>
+        {% endif %}
+    </div>
         <!-- fa un button pentru xml -->
-        <a
-    href="{{url_for('download')}}"
-    style="
-      border: 1px solid grey;
-      height: fit-content;
-      margin-top: 1em;
-      margin-bottom: 20px;
-      margin-right: 10vw;
-      font-size: 30px;
-      letter-spacing: 1px;
-    "
-    class="btn btn-success"
-  >Descarca XML</a>
+    <div style="flex-direction:column;margin-left: 10em;">
+        <a href="{{url_for('download')}} type="button" class="btn btn-outline-success btn-lg" style=" margin-left:13em;margin-top:1em;margin-bottom:50%;">Descarca XML</a>
+        <table class="table table-sm table-hover" style="margin-top:-10em;width: 45em;">
+            <thead>
+                <tr>
+                    <th scope="col">An</th>
+                    <th scope="col">Eveniment</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- asa se spameaza tabelul -->
+                <!-- {% for e in events %} 
+                    <tr>
+                        <th scope="row"> {{e.an}}</th>
+                        <td>{{e.eveniment}}</td> 
+                    </tr>
+                {% endfor %} -->
+                <!-- dummy -->
+                <tr>
+                    <th scope="row"> 2009 </th>
+                    <td>In February the Government overrule court decision that commission investigating Communist-era secret police is illegal. For two days, starting on April 2, Romania host 2008 NATO summit. Legislative election are held on November 30. Emil Boc becomes the new Prime Minister following the elections.</td> 
+                </tr>
+                <tr>
+                    <th scope="row"> 2009 </th>
+                    <td>In February the Government overrule court decision that commission investigating Communist-era secret police is illegal. For two days, starting on April 2, Romania host 2008 NATO summit. Legislative election are held on November 30. Emil Boc becomes the new Prime Minister following the elections.</td> 
+                </tr>
+                <!-- end dummy -->
+            </tbody>
+        </table>
+    </div>
 
 </div>
 

@@ -1,6 +1,6 @@
-from flask import Flask,render_template,url_for,redirect,request,send_file
+from flask import Flask,render_template,url_for,redirect,request,send_file,send_from_directory
 from forms import inputText, resultsInput
-import secrets,os,PyPDF2
+import secrets,os
 from datetime import datetime
 from templates.pysyntime import SynTime, syntime
 app = Flask(__name__)
@@ -15,13 +15,24 @@ def save(f):
     f.save(filepath)
     return filepath
 
+def readevents():
+    import json
+    with open('hstrom.txt') as f:
+        content = f.read()
+    js = json.loads(content)
+    print(js)
+
 def getTextFromPdf(numePdf):
-    file = open(numePdf, "rb")
-    reader = PyPDF2.PdfFileReader(file)
-    # fileToWrite = open("pdf.txt", "a+")
+    from pdf2image import convert_from_path
+    import pytesseract
+    from pytesseract import image_to_string
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+    images = convert_from_path(numePdf,poppler_path=r'C:\Program Files\poppler-0.68.0\bin') 
     extractedText = ''
-    for i in range(0, reader.numPages):
-        extractedText += '' + reader.getPage(i).extractText()
+    for i in images:
+        extractedText = extractedText + image_to_string(images[0],lang='ron+equ',config="--psm 6") + ' '
+    
     return extractedText
 
 # @app.route('/favicon.ico')
@@ -55,17 +66,22 @@ def results():
         if form.validate_on_submit():
             #prelucrare 
             timeMLText = syntime.extractTimexFromText(form.inputText.data, date)
-            return redirect(url_for('output',data=timeMLText))
+            return redirect(url_for('output',data=timeMLText,pdf = data))
         return render_template('results.html',data=textdinpdf,form=form)
     elif data != '':
         timeMLText = syntime.extractTimexFromText(data, date)
-        return redirect(url_for('output',data=timeMLText))
+        return redirect(url_for('output',data=timeMLText,pdf=''))
     # filesToDelete.append(data)
     
 @app.route('/output/')
 def output():
+    # readevents()
     data = request.args.get('data')
-    return render_template('output.html',data=data)
+    numepdf = request.args.get('pdf')
+    if numepdf == '':
+        return render_template('output.html',data=data,pdf=0)
+    else:    
+        return render_template('output.html',data=data,pdf=1,nume=numepdf)
 
 @app.route('/download', methods=['GET'])
 def download():
@@ -73,6 +89,10 @@ def download():
     print(os.getcwd())
     return send_file(file,as_attachment=True)
 
+@app.route('/pdf/<numepdf>')
+def showpdf(numepdf):
+    filepath = os.path.split(numepdf)
+    return send_from_directory(filepath[0], filepath[1])
 
 if __name__ == '__main__':
     app.run(debug=True)
