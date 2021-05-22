@@ -30,7 +30,11 @@
     </div>
         <!-- fa un button pentru xml -->
     <div style="flex-direction:column;margin-left: 10em;">
-        <a href="{{url_for('download')}} type="button" class="btn btn-outline-success btn-lg" style=" margin-left:13em;margin-top:1em;margin-bottom:50%;">Descarca XML</a>
+        
+        <a href="{{url_for('download')}}" type="button"  class="btn btn-outline-success btn-lg" style=" margin-left:13em;margin-top:1em;margin-bottom:50%;">
+            Descarca XML
+        </a>
+
         <table class="table table-sm table-hover" style="margin-top:-10em;width: 45em;">
             <thead>
                 <tr>
@@ -40,22 +44,13 @@
             </thead>
             <tbody>
                 <!-- asa se spameaza tabelul -->
-                <!-- {% for e in events %} 
+                {% for key, value in events.items() %} 
                     <tr>
-                        <th scope="row"> {{e.an}}</th>
-                        <td>{{e.eveniment}}</td> 
+                        <th scope="row"> {{key}}</th>
+                        <td>{{value}}</td> 
                     </tr>
-                {% endfor %} -->
-                <!-- dummy -->
-                <tr>
-                    <th scope="row"> 2009 </th>
-                    <td>In February the Government overrule court decision that commission investigating Communist-era secret police is illegal. For two days, starting on April 2, Romania host 2008 NATO summit. Legislative election are held on November 30. Emil Boc becomes the new Prime Minister following the elections.</td> 
-                </tr>
-                <tr>
-                    <th scope="row"> 2009 </th>
-                    <td>In February the Government overrule court decision that commission investigating Communist-era secret police is illegal. For two days, starting on April 2, Romania host 2008 NATO summit. Legislative election are held on November 30. Emil Boc becomes the new Prime Minister following the elections.</td> 
-                </tr>
-                <!-- end dummy -->
+                {% endfor %}
+                
             </tbody>
         </table>
     </div>

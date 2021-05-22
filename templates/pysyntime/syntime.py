@@ -5,6 +5,8 @@ from .util import TokenTypeUtil
 import xml.etree.ElementTree as ET
 from datetime import datetime as dt
 
+valoriGasite =[]
+
 class SynTime(object):
     """
     SynTime APIs.
@@ -358,22 +360,25 @@ class SynTime(object):
                 else:
                     type="Not found"
                 index += 1
-
+            
             if timexEndToken.endswith('\'s'):
                 timex = text[lastCharPosition:endCharPosition - 2]
                 timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                valoriGasite.append(timex)
                 tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
                 lastCharPosition = endCharPosition - 2
             elif timexEndToken.endswith('s') and (timexEndTokenPosition + 1 < taggedTokenListLen and
                     taggedTokenList[timexEndTokenPosition + 1].token == "'"):
                 timex = text[lastCharPosition:taggedTokenList[timexEndTokenPosition + 1].endCharPosition]
                 timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                valoriGasite.append(timex)
                 tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
 
                 lastCharPosition = taggedTokenList[timexEndTokenPosition + 1].endCharPosition
             else:
                 timex = text[lastCharPosition:endCharPosition]
                 timeMLText += SynTime.__getTIMEX3Str(tid, type, value, timex)
+                valoriGasite.append(timex)
                 tag = ET.SubElement(TEXT, 'TIMEEX', id=str(tid), value=str(timex), type=type).text = str(timex)
                 lastCharPosition = endCharPosition
             tid += 1
@@ -381,7 +386,8 @@ class SynTime(object):
         # timeMLText += text[lastCharPosition:]
         tree = ET.ElementTree(xml_doc)
         tree.write(r'templates\pysyntime\resource\outputXML.xml', encoding='UTF-8', xml_declaration=True)
-        return timeMLText
+        
+        return timeMLText,valoriGasite
 
     @classmethod
     def __getTIMEX3Str(cls, tid, timexType, value, timex):

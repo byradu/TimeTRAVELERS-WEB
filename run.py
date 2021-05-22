@@ -6,6 +6,7 @@ from templates.pysyntime import SynTime, syntime
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'd1c8efd030c6d6c85a46bde85c2597805cf6c18bf1f40dbbfb7fc740d38b1113'
 
+evenimente = []
 
 def save(f):
     random_hex = secrets.token_hex(8)
@@ -17,10 +18,10 @@ def save(f):
 
 def readevents():
     import json
-    with open('hstrom.txt') as f:
+    with open('events.json') as f:
         content = f.read()
     js = json.loads(content)
-    print(js)
+    return js
 
 def getTextFromPdf(numePdf):
     from pdf2image import convert_from_path
@@ -56,6 +57,7 @@ def home():
 
 @app.route('/results/',methods =  ['POST','GET'])
 def results():
+    global evenimente
     syntime = SynTime()
     date = datetime.today().strftime("%d-%m-%Y")
     data = request.args.get('userInput')
@@ -65,29 +67,37 @@ def results():
         form = resultsInput()
         if form.validate_on_submit():
             #prelucrare 
-            timeMLText = syntime.extractTimexFromText(form.inputText.data, date)
+            timeMLText,evenimente = syntime.extractTimexFromText(form.inputText.data, date)
             return redirect(url_for('output',data=timeMLText,pdf = data))
         return render_template('results.html',data=textdinpdf,form=form)
     elif data != '':
-        timeMLText = syntime.extractTimexFromText(data, date)
+        timeMLText,evenimente = syntime.extractTimexFromText(data, date)
+        # print(evenimente)
         return redirect(url_for('output',data=timeMLText,pdf=''))
     # filesToDelete.append(data)
     
 @app.route('/output/')
 def output():
-    # readevents()
+    listaEvenimente = readevents()
     data = request.args.get('data')
     numepdf = request.args.get('pdf')
+    events ={}
+    for i in evenimente:
+        if i in listaEvenimente:
+            events[i] = listaEvenimente[str(i)]
+        # for j in range(int(i)-5,int(i)+5):
+        #     if i in listaEvenimente:
+        #         events[j] = listaEvenimente[str(j)]
     if numepdf == '':
-        return render_template('output.html',data=data,pdf=0)
+        return render_template('output.html',data=data,pdf=0,events=events)
     else:    
-        return render_template('output.html',data=data,pdf=1,nume=numepdf)
+        return render_template('output.html',data=data,pdf=1,nume=numepdf,events=events)
 
 @app.route('/download', methods=['GET'])
 def download():
     file="templates/pysyntime/resource/outputXML.xml"
     print(os.getcwd())
-    return send_file(file,as_attachment=True)
+    return send_file(file,mimetype='text/xml',as_attachment=True)
 
 @app.route('/pdf/<numepdf>')
 def showpdf(numepdf):
