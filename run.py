@@ -13,6 +13,8 @@ loading_gif=os.path.join(app.config['UPLOAD_FOLDER'],'spinner2.gif')
 
 evenimente = []
 numepdf = ''
+images_data = []
+imgs = []
 
 def save(f):
     random_hex = secrets.token_hex(8)
@@ -32,13 +34,22 @@ def readevents():
 def getTextFromPdf(numePdf):
     from pdf2image import convert_from_path
     import pytesseract
-    from pytesseract import image_to_string,Output
+    from pytesseract import image_to_data,Output
+    import cv2 as cv
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
     images = convert_from_path(numePdf,poppler_path=r'C:\Program Files\poppler-0.68.0\bin')
     extractedText = ''
+    global images_data,imgs
+    images_data = []
+    imgs = []
     for i in images:
-        extractedText = extractedText + image_to_string(i,lang='ron+equ+eng',config="--psm 6") + ' '
+        imgs.append(cv.cvtColor(np.array(i),cv.COLOR_RGB2BGR))
+        d = pytesseract.image_to_data(i,output_type=Output.DICT,lang='eng+ron+equ',config="--psm 6")
+        images_data.append(d)
+        n = len(d['level'])
+        for j in range(n):
+            extractedText = extractedText + d['text'][j] + ' '
     
     return extractedText
 
@@ -53,26 +64,24 @@ def createMarkedPdf(nume,functionEvent): #salvarea pdf-ului marcat
     from pytesseract import Output
     from PIL import Image
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    images = convert_from_path(nume,poppler_path=r'C:\Program Files\poppler-0.68.0\bin')
+    
     try:
         os.remove('result.pdf')        
     except :
         pass
-    ok = 0
     first_page = 0
+    ok = 0 
     restOfThePages = []
-    for i in images:
-        img = cv.cvtColor(np.array(i),cv.COLOR_RGB2BGR)
-        d = pytesseract.image_to_data(img,output_type=Output.DICT,lang='eng+ron+equ',config="--psm 6")
-        boxes = len(d['level'])
+    for i,img in zip(images_data,imgs):
+        boxes = len(i['level'])
         for e in functionEvent:
             for j in range(boxes):
-                if e in d['text'][j]:
-                    (x,y,w,h) = (d['left'][j],d['top'][j],d['width'][j],d['height'][j])
+                if e in i['text'][j]:
+                    (x,y,w,h) = (i['left'][j],i['top'][j],i['width'][j],i['height'][j])
                     cv.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
                 elif j+1<boxes:
-                    if e in (d['text'][j]+' '+d['text'][j+1] or d['text'][j]+d['text'][j+1]):
-                        (x,y,w,h) = (min(d['left'][j],d['left'][j+1]),max(d['top'][j],d['top'][j+1]),max(d['width'][j],d['width'][j+1]),max(d['height'][j],d['height'][j+1]))
+                    if e in (i['text'][j]+' '+i['text'][j+1] or i['text'][j]+i['text'][j+1]):
+                        (x,y,w,h) = (min(i['left'][j],i['left'][j+1]),max(i['top'][j],i['top'][j+1]),max(i['width'][j],i['width'][j+1]),max(i['height'][j],i['height'][j+1]))
                         cv.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
         img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
         im_pil = Image.fromarray(img)
@@ -93,9 +102,13 @@ def home():
         #prelucrare
         if form.fileInput.data != None:#daca e pdf
             to_remove_after_process_it = save(form.fileInput.data)#salvare pdf sau txt
-            return redirect(url_for('results',userInput=to_remove_after_process_it))
+            if '.txt' in to_remove_after_process_it:
+                with open(to_remove_after_process_it,'rb') as f:
+                    textdintxt = f.read()
+                    return redirect(url_for('results',userInput=textdintxt))        
+            else:
+                return redirect(url_for('results',userInput=to_remove_after_process_it))
         elif form.inputText.data != '':#atunci e input manual
-            # print(form.inputText.data)
             return redirect(url_for('results',userInput=form.inputText.data))
     return render_template('index.html',form = form,loading_gif=loading_gif)
 
