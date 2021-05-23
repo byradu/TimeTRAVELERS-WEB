@@ -48,9 +48,12 @@ def createMarkedPdf(nume,functionEvent): #salvarea pdf-ului marcat
     from pytesseract import Output
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
     images = convert_from_path(nume,poppler_path=r'C:\Program Files\poppler-0.68.0\bin')
-
+    try:
+        os.remove('result.pdf')        
+    except :
+        pass
     for i in images:
-        img = cv.cvtColor(np.array(images[0]),cv.COLOR_RGB2BGR)
+        img = cv.cvtColor(np.array(i),cv.COLOR_RGB2BGR)
         d = pytesseract.image_to_data(img,output_type=Output.DICT,lang='eng+ron+equ',config="--psm 6")
         boxes = len(d['level'])
         for i in range(boxes):
@@ -59,11 +62,11 @@ def createMarkedPdf(nume,functionEvent): #salvarea pdf-ului marcat
                     (x,y,w,h) = (d['left'][i],d['top'][i],d['width'][i],d['height'][i])
                     cv.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
                 elif i+1<boxes:
-                    if e in d['text'][i]+d['text'][i+1]:
+                    if e in (d['text'][i]+' '+d['text'][i+1] or d['text'][i]+d['text'][i+1]):
                         (x,y,w,h) = (max(d['left'][i],d['left'][i+1]),max(d['top'][i],d['top'][i+1]),max(d['width'][i],d['width'][i+1]),max(d['height'][i],d['height'][i+1]))
                         cv.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
         pdf = pytesseract.image_to_pdf_or_hocr(img,extension='pdf')
-        with open('results.pdf','w+b') as f:
+        with open('results.pdf','a+b') as f:
             f.write(pdf)
 
 
