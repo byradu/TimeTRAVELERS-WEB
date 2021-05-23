@@ -31,11 +31,23 @@
         <!-- fa un button pentru xml -->
     <div style="flex-direction:column;margin-left: 10em;">
         
-        <a href="{{url_for('download')}}" type="button"  class="btn btn-outline-success btn-lg" style=" margin-left:13em;margin-top:1em;margin-bottom:50%;">
+        {%if pdf==1 %}
+        <div style="flex-direction: row; justify-content: space-between;margin-left:10em;margin-top:1em;margin-bottom:50%;">
+            <a href="{{url_for('download')}}" type="button"  class="btn btn-outline-success btn-lg" >
+                Descarca XML
+            </a>
+            <a href="{{url_for('downloadpdf')}}" type="button"  class="btn btn-outline-success btn-lg" >
+                Descarca PDF-ul marcat
+            </a>
+        </div>
+            
+        {% else %}
+        <a href="{{url_for('download')}}" type="button"  class="btn btn-outline-success btn-lg" style="margin-left:13em;margin-top:1em;margin-bottom:50%; " >
             Descarca XML
         </a>
-
-        <table class="table table-sm table-hover" style="margin-top:-10em;width: 45em;">
+        {% endif %}
+        
+        <table class="table table-sm table-hover scroll" style="margin-top:-17.5em;width: 45em;">
             <thead>
                 <tr>
                     <th scope="col">An</th>
@@ -53,6 +65,7 @@
                 
             </tbody>
         </table>
+
     </div>
 
 </div>
