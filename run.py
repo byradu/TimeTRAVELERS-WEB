@@ -1,6 +1,6 @@
 from flask import Flask,render_template,url_for,redirect,request,send_file,send_from_directory
 from forms import inputText, resultsInput
-import secrets,os
+import secrets,os,re
 from datetime import datetime
 from templates.pysyntime import SynTime, syntime
 app = Flask(__name__)
@@ -83,11 +83,14 @@ def output():
     numepdf = request.args.get('pdf')
     events ={}
     for i in evenimente:
-        if i in listaEvenimente:
-            events[i] = listaEvenimente[str(i)]
-        # for j in range(int(i)-5,int(i)+5):
-        #     if i in listaEvenimente:
-        #         events[j] = listaEvenimente[str(j)]
+        an = re.findall(r"(?<!\d)\d{4}(?!\d)",i)
+        try:
+            if an[0] in listaEvenimente:
+                events[an[0]] = listaEvenimente[an[0]]
+        except:
+            pass
+
+    events = dict(sorted(events.items()))
     if numepdf == '':
         return render_template('output.html',data=data,pdf=0,events=events)
     else:    
