@@ -119,8 +119,24 @@ def results():
     syntime = SynTime()
     date = datetime.today().strftime("%d-%m-%Y")
     data = request.args.get('userInput')
-    numepdf = data
-    if '.pdf' in data:
+    if '.docx' in data:
+        from docx import Document
+        doc = Document(data)
+        txt = ''
+        for para in doc.paragraphs:
+            txt = txt + para.text + ' '
+        
+        form = resultsInput()
+        if form.validate_on_submit():
+            try:
+                timeMLText,evenimente = syntime.extractTimexFromText(form.inputText.data, date)
+            except :
+                timeMLText = syntime.extractTimexFromText(form.inputText.data, date)
+            return redirect(url_for('output',data=timeMLText,pdf = ''))
+        return render_template('results.html',data=txt,form = form)
+        
+    elif '.pdf' in data:
+        numepdf = data
         textdinpdf = getTextFromPdf(data)
         # print(timeMLText)
         form = resultsInput()
@@ -131,7 +147,7 @@ def results():
             except :
                 timeMLText = syntime.extractTimexFromText(form.inputText.data, date)
             return redirect(url_for('output',data=timeMLText,pdf = data))
-        return render_template('results.html',data=textdinpdf,form = form,loading_gif=loading_gif)
+        return render_template('results.html',data=textdinpdf,form = form)
     elif data != '':
         try:            
             timeMLText,evenimente = syntime.extractTimexFromText(data, date)

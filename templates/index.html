@@ -11,18 +11,19 @@ transform: translate(-50%, -50%);position:absolute">
         </div>
       </div>
 </div>
-<div class="content-section container d-block justify-content-xxl-center">
+<div class="content-section container d-block justify-content-xxl-center" style="margin-top: 1em;">
     <form method="POST" action="#" enctype="multipart/form-data" id="formular">
         <!-- necesar pentru protectia cookieurilor (aduga CSRF token)-->
         {{form.hidden_tag()}}
         <fieldset class="form-group">
             <div class="form-group d-block justify-content-xxl-center">   
                 {{form.inputText.label(class="form-control-plaintextd-flex text-center h3")}}
-                {{form.inputText(class="form-control form-control-lg overflow-auto d-block",rows="7")}}
+                {{form.inputText(class="form-control form-control-lg overflow-auto d-block",rows="10")}}
             </div>
             <div class="form-group d-block justify-content-xxl-center" style="margin-top: 1em;">   
-                {{form.fileInput.label()}}
-                {{form.fileInput(class="")}}
+                {{form.fileInput.label(class="")}}
+                {{form.fileInput(class="form-control",style="display:flex")}}
+                <span>Tipuri de fisiere acceptate: pdf, txt, docx</span>
             </div>
             
         </fieldset>

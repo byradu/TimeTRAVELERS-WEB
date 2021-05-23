@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired,Optional
 
 class inputText(FlaskForm):
     inputText = TextAreaField('Introduceti textul dumneavoastra aici',validators=[Optional()])
-    fileInput = FileField('Introduceti fisierul',validators=[Optional(),FileAllowed(['pdf','txt'])] )
+    fileInput = FileField('Atasati un fisier',validators=[Optional(),FileAllowed(['pdf','txt','docx'])] )
     submit = SubmitField('Start!')
 
 class resultsInput(FlaskForm):
