@@ -134,7 +134,7 @@ def results():
                 timeMLText = syntime.extractTimexFromText(form.inputText.data, date)
             return redirect(url_for('output',data=timeMLText,pdf = ''))
         return render_template('results.html',data=txt,form = form)
-        
+
     elif '.pdf' in data:
         numepdf = data
         textdinpdf = getTextFromPdf(data)
@@ -168,6 +168,10 @@ def output():
         try:
             if an[0] in listaEvenimente:
                 events[an[0]] = listaEvenimente[an[0]]
+            else:
+                for j in range(int(an[0])-5,int(an[0])+5):
+                    if str(j) in listaEvenimente:
+                        events[str(j)] = listaEvenimente[str(j)]
         except:
             pass
     events = dict(sorted(events.items()))
