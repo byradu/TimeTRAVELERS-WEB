@@ -10,3 +10,7 @@ This is a college project that recognizes temporal expressions in a text or a PD
 - Tagger used to recognize temporal expressions **_[pysyntime](https://github.com/ZhouShengsheng/pysyntime)_** with modified Regex for Romanian Language
  
 ## Demo
+
+
+https://user-images.githubusercontent.com/44706212/135733455-0f84e896-6e96-4e96-8f35-ac3f48075913.mp4
+
