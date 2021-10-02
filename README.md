@@ -12,5 +12,4 @@ This is a college project that recognizes temporal expressions in a text or a PD
 ## Demo
 
 
-https://user-images.githubusercontent.com/44706212/135733455-0f84e896-6e96-4e96-8f35-ac3f48075913.mp4
-
+https://user-images.githubusercontent.com/44706212/135733492-f543aec8-3d36-4be5-a3d5-b233c09e20a8.mp4
